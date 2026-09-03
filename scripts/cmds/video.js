@@ -9,7 +9,7 @@ module.exports = {
         config: {
                 name: "video",
                 aliases: ["ভিডিও"],
-                version: "1.8",
+                version: "1.9",
                 author: "MahMUD",
                 countDown: 10,
                 role: 0,
@@ -66,7 +66,7 @@ module.exports = {
                                 videoID = args[0].match(checkurl)[1];
                         } else {
                                 const keyWord = args.join(" ");
-                                const searchRes =- await axios.get(`${apiUrl}/api/video/search?songName=${encodeURIComponent(keyWord)}`);
+                                const searchRes = await axios.get(`${apiUrl}/api/video/search?songName=${encodeURIComponent(keyWord)}`);
                                 if (!searchRes.data || searchRes.data.length === 0) {
                                         api.setMessageReaction("🥹", event.messageID, () => {}, true);
                                         return message.reply(getLang("noResult"));
@@ -77,7 +77,6 @@ module.exports = {
                         const res = await axios.get(`${apiUrl}/api/video/download?link=${videoID}&format=mp4`);
                         const { title, downloadLink } = res.data;
 
-                        // সরাসরি এপিআই থেকে প্রাপ্ত ডাউনলোড লিংক স্ট্রিম আকারে পাঠানো হলো (রেন্ডার ক্র্যাশ করবে না)
                         return message.reply({
                                 body: getLang("success", title),
                                 attachment: await global.utils.getStreamFromURL(downloadLink, "video.mp4")
