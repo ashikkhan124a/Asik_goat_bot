@@ -1,101 +1,71 @@
 const axios = require("axios");
-const fs = require('fs');
-const path = require('path');
-
-const baseApiUrl = async () => {
-        const base = await axios.get(`https://raw.githubusercontent.com/mahmudx7/HINATA/main/baseApiUrl.json`);
-        return base.data.mahmud; 
-};
 
 module.exports = {
         config: {
                 name: "video",
                 aliases: ["ভিডিও"],
-                version: "2.0",
+                version: "2.1",
                 author: "MahMUD",
                 countDown: 10,
                 role: 0,
                 description: {
-                        bn: "ইউটিউব থেকে ভিডিও ডাউনলোড করুন (নাম বা লিঙ্ক দিয়ে)",
-                        en: "Download video from YouTube (by name or link)",
-                        vi: "Tải video từ YouTube (theo tên hoặc liên kết)"
+                        bn: "ইউটিউব থেকে ভিডিও ডাউনলোড করুন",
+                        en: "Download video from YouTube",
+                        vi: "Tải video từ YouTube"
                 },
                 category: "media",
                 guide: {
-                        bn: '   {pn} <নাম বা লিঙ্ক>: ভিডিও ডাউনলোড করতে নাম বা লিঙ্ক দিন',
-                        en: '   {pn} <name or link>: Provide video name or link',
-                        vi: '   {pn} <tên hoặc liên kết>: Cung cấp tên hoặc liên kết video'
+                        bn: '   {pn} <নাম বা লিঙ্ক>',
+                        en: '   {pn} <name or link>',
+                        vi: '   {pn} <tên hoặc liên kết>'
                 }
         },
 
         langs: {
                 bn: {
-                        noInput: "× বেবি, ভিডিওর নাম বা লিঙ্ক তো দাও! 📺",
-                        noResult: "× কোনো রেজাল্ট পাওয়া যায়নি।",
+                        noInput: "× ভিডিওর নাম বা লিঙ্ক দিন! 📺",
+                        noResult: "× কোনো ভিডিও পাওয়া যায়নি।",
                         success: "✅ 𝙃𝙚𝙧𝙚'𝙨 𝙮𝙤𝙪𝙧 𝙫𝙞𝙙𝙚𝙤 𝙗𝙖𝙗𝙮\n\n• 𝐓𝐢𝐭𝐥𝐞: %1",
-                        error: "× সমস্যা হয়েছে: %1। প্রয়োজনে Contact MahMUD।"
-                },
-                en: {
-                        noInput: "× Baby, please provide a video name or link! 📺",
-                        noResult: "× No results found.",
-                        success: "✅ 𝙃𝙚𝙧𝙚'𝙨 𝙮𝙤𝙪𝙧 𝙫𝙞𝙙𝙚𝙤 𝙗𝙖𝙗𝙮\n\n• 𝐓𝐢𝐭𝐥𝐞: %1",
-                        error: "× API error: %1. Contact MahMUD for help."
-                },
-                vi: {
-                        noInput: "× Cưng ơi, vui lòng cung cấp tên hoặc liên kết video! 📺",
-                        noResult: "× Không tìm thấy kết quả.",
-                        success: "✅ Video của cưng đây <😘\n\n• 𝐓𝐢êu đề: %1",
-                        error: "× Lỗi: %1. Liên hệ MahMUD để hỗ trợ."
+                        error: "× সমস্যা হয়েছে: %1"
                 }
         },
 
         onStart: async function ({ api, event, args, message, getLang }) {
-                const authorName = String.fromCharCode(77, 97, 104, 77, 85, 68);
-                if (this.config.author !== authorName) {
-                        return api.sendMessage("You are not authorized to change the author name.", event.threadID, event.messageID);
-                }
-
                 if (!args[0]) return message.reply(getLang("noInput"));
 
                 try {
-                        api.setMessageReaction("🐤", event.messageID, () => {}, true);
+                        api.setMessageReaction("⏳", event.messageID, () => {}, true);
                         
-                        const apiUrl = await baseApiUrl();
-                        const checkurl = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))((\w|-){11})(?:\S+)?$/;
-                        let videoID;
-
-                        if (checkurl.test(args[0])) {
-                                videoID = args[0].match(checkurl)[1];
-                        } else {
-                                const keyWord = args.join(" ");
-                                const searchRes = await axios.get(`${apiUrl}/api/video/search?songName=${encodeURIComponent(keyWord)}`);
-                                if (!searchRes.data || searchRes.data.length === 0) {
-                                        api.setMessageReaction("🥹", event.messageID, () => {}, true);
-                                        return message.reply(getLang("noResult"));
-                                }
-                                videoID = searchRes.data[0].id;
+                        const query = encodeURIComponent(args.join(" "));
+                        const searchApi = await axios.get(`https://deliriussapiens-josh-apis.vercel.app/search/yt?q=${query}`);
+                        
+                        if (!searchApi.data || !searchApi.data.results || searchApi.data.results.length === 0) {
+                                api.setMessageReaction("❌", event.messageID, () => {}, true);
+                                return message.reply(getLang("noResult"));
                         }
 
-                        const cacheDir = path.join(__dirname, "cache");
-                        if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
-                        const filePath = path.join(cacheDir, `video_${Date.now()}.mp4`);
+                        const videoInfo = searchApi.data.results[0];
+                        const videoUrl = videoInfo.url;
+                        const title = videoInfo.title;
 
-                        const res = await axios.get(`${apiUrl}/api/video/download?link=${videoID}&format=mp4`);
-                        const { title, downloadLink } = res.data;
+                        const downloadApi = await axios.get(`https://deliriussapiens-josh-apis.vercel.app/download/ytmp4?url=${encodeURIComponent(videoUrl)}`);
+                        
+                        if (!downloadApi.data || !downloadApi.data.download) {
+                                api.setMessageReaction("❌", event.messageID, () => {}, true);
+                                return message.reply(getLang("noResult"));
+                        }
 
-                        const videoBuffer = (await axios.get(downloadLink, { responseType: "arraybuffer", timeout: 60000 })).data;
-                        fs.writeFileSync(filePath, Buffer.from(videoBuffer));
+                        const downloadLink = downloadApi.data.download.url;
 
                         return message.reply({
                                 body: getLang("success", title),
-                                attachment: fs.createReadStream(filePath)
+                                attachment: await global.utils.getStreamFromURL(downloadLink, "video.mp4")
                         }, () => {
-                                api.setMessageReaction("🪽", event.messageID, () => {}, true);
-                                if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+                                api.setMessageReaction("✅", event.messageID, () => {}, true);
                         });
 
                 } catch (err) {
-                        console.error("Video Download Error:", err);
+                        console.error("Video Error:", err);
                         api.setMessageReaction("❌", event.messageID, () => {}, true);
                         return message.reply(getLang("error", err.message));
                 }
