@@ -1,6 +1,4 @@
 const axios = require("axios");
-const fs = require('fs');
-const path = require('path');
 
 const baseApiUrl = async () => {
         const base = await axios.get(`https://raw.githubusercontent.com/mahmudx7/HINATA/main/baseApiUrl.json`);
@@ -11,7 +9,7 @@ module.exports = {
         config: {
                 name: "video",
                 aliases: ["ভিডিও"],
-                version: "1.7",
+                version: "1.8",
                 author: "MahMUD",
                 countDown: 10,
                 role: 0,
@@ -68,7 +66,7 @@ module.exports = {
                                 videoID = args[0].match(checkurl)[1];
                         } else {
                                 const keyWord = args.join(" ");
-                                const searchRes = await axios.get(`${apiUrl}/api/video/search?songName=${encodeURIComponent(keyWord)}`);
+                                const searchRes =- await axios.get(`${apiUrl}/api/video/search?songName=${encodeURIComponent(keyWord)}`);
                                 if (!searchRes.data || searchRes.data.length === 0) {
                                         api.setMessageReaction("🥹", event.messageID, () => {}, true);
                                         return message.reply(getLang("noResult"));
@@ -76,22 +74,15 @@ module.exports = {
                                 videoID = searchRes.data[0].id;
                         }
 
-                        const cacheDir = path.join(__dirname, "cache");
-                        if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
-                        const filePath = path.join(cacheDir, `video_${videoID}.mp4`);
-
                         const res = await axios.get(`${apiUrl}/api/video/download?link=${videoID}&format=mp4`);
                         const { title, downloadLink } = res.data;
 
-                        const videoBuffer = (await axios.get(downloadLink, { responseType: "arraybuffer" })).data;
-                        fs.writeFileSync(filePath, Buffer.from(videoBuffer));
-
+                        // সরাসরি এপিআই থেকে প্রাপ্ত ডাউনলোড লিংক স্ট্রিম আকারে পাঠানো হলো (রেন্ডার ক্র্যাশ করবে না)
                         return message.reply({
                                 body: getLang("success", title),
-                                attachment: fs.createReadStream(filePath)
+                                attachment: await global.utils.getStreamFromURL(downloadLink, "video.mp4")
                         }, () => {
                                 api.setMessageReaction("🪽", event.messageID, () => {}, true);
-                                if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
                         });
 
                 } catch (err) {
