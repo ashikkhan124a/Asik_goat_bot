@@ -32,7 +32,7 @@ module.exports = {
 	},
 
 	onStart: async function ({ message, event, args, threadsData, api, getLang }) {
-		const myOwnerID = "61591763713247"; // <--- আপনার ফেসবুক UID এখানে লিখবেন
+		const myOwnerID = "61591763713247"; // আপনার দেওয়া UID এখানে সেট করা হলো
 		const threadInfo = await api.getThreadInfo(event.threadID);
 		const groupAdmins = threadInfo.adminIDs.map(e => e.id);
 
@@ -70,4 +70,3 @@ module.exports = {
 		}
 	}
 };
-				
