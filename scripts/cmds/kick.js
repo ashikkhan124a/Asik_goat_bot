@@ -18,29 +18,33 @@ module.exports = {
 
 	langs: {
 		vi: {
-			needAdmin: "Vui lòng thêm quản trị viên cho bot trước khi sử dụng tính năng này"
+			needAdmin: "Vui lòng thêm quản trị viên cho bot trước khi sử dụng tính năng này",
+			notAllowed: "⚠️ শুধুমাত্র গ্রুপ অ্যাডমিন অথবা বটের ওনার এই কমান্ডটি ব্যবহার করতে পারবেন!"
 		},
 		en: {
-			needAdmin: "Please add admin for bot before using this feature"
-		},
-		tl: {
-			needAdmin: "Mangyaring magdagdag ng admin para sa bot bago gamitin ang feature na ito"
-		},
-		hi: {
-			needAdmin: "Is feature ka upyog karne se pehle bot ke liye admin add karein"
-		},
-		ar: {
-			needAdmin: "الرجاء إضافة مسؤول للبوت قبل استخدام هذه الميزة"
+			needAdmin: "Please add admin for bot before using this feature",
+			notAllowed: "⚠️ Only group admins or the bot owner can use this command!"
 		},
 		bn: {
-			needAdmin: "এই ফিচার ব্যবহার করার আগে bot এ admin যোগ করুন"
+			needAdmin: "এই ফিচার ব্যবহার করার আগে bot এ admin যোগ করুন",
+			notAllowed: "⚠️ শুধুমাত্র গ্রুপ অ্যাডমিন অথবা বটের ওনার এই কমান্ডটি ব্যবহার করতে পারবেন!"
 		}
 	},
 
 	onStart: async function ({ message, event, args, threadsData, api, getLang }) {
+		const myOwnerID = "61591763713247"; // <--- আপনার ফেসবুক UID এখানে লিখবেন
+		const threadInfo = await api.getThreadInfo(event.threadID);
+		const groupAdmins = threadInfo.adminIDs.map(e => e.id);
+
+		// চেক করবে মেসেজদাতা গ্রুপ অ্যাডমিন কি না অথবা আপনি কি না
+		if (!groupAdmins.includes(event.senderID) && event.senderID !== myOwnerID) {
+			return message.reply(getLang("notAllowed"));
+		}
+
 		const adminIDs = await threadsData.get(event.threadID, "adminIDs");
 		if (!adminIDs.includes(api.getCurrentUserID()))
 			return message.reply(getLang("needAdmin"));
+
 		async function kickAndCheckError(uid) {
 			try {
 				await api.removeUserFromGroup(uid, event.threadID);
@@ -50,7 +54,7 @@ module.exports = {
 				return "ERROR";
 			}
 		}
-		if (!args[0]) {
+		if (!args.length) {
 			if (!event.messageReply)
 				return message.SyntaxError();
 			await kickAndCheckError(event.messageReply.senderID);
@@ -66,3 +70,4 @@ module.exports = {
 		}
 	}
 };
+				
