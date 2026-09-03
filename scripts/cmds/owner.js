@@ -26,8 +26,8 @@ module.exports = {
 │ 📚 Eᴅᴜᴄᴀᴛɪᴏɴ : Scc 2025
 │ 🏡 Lᴏᴄᴀᴛɪᴏɴ : Cox Bazar- Bangladesh 
 ├─ 🔗 Cᴏɴᴛᴀᴄᴛ ─╮
-│ 📘 Facebook  : fb.com/ayanxhowdhury 
-│ 💬 Messenger: m.me/akashx404 
+│ 📘 Facebook  : fb.com/ayan xhowdhury 
+│ 💬 Messenger: m.me/ayan xhowdhury 
 │ 📞 WhatsApp  : wa.me/01825784274
 ╰────────────────╯`;
 
