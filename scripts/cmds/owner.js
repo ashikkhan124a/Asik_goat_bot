@@ -6,7 +6,7 @@ module.exports = {
   config: {
     name: "owner",
     version: "1.3.0",
-    author: "Mᴏʜᴀᴍᴍᴀᴅ Aᴋᴀsʜ",
+    author: "Ridh Islam ayan",
     role: 0,
     shortDescription: "Owner information with image",
     category: "Information",
@@ -18,17 +18,17 @@ module.exports = {
   onStart: async function ({ api, event }) {
     const ownerText = 
 `╭─ 👑 Oᴡɴᴇʀ Iɴғᴏ 👑 ─╮
-│ 👤 Nᴀᴍᴇ       : Mᴏʜᴀᴍᴍᴀᴅ Aᴋᴀsʜ
-│ 🧸 Nɪᴄᴋ       : Aᴋᴀsʜ
-│ 🎂 Aɢᴇ        : 18+
+│ 👤 Nᴀᴍᴇ       : Ridh Islam Ayan 
+│ 🧸 Nɪᴄᴋ       : Rid
+│ 🎂 Aɢᴇ        : 17
 │ 💘 Rᴇʟᴀᴛɪᴏɴ : Sɪɴɢʟᴇ
-│ 🎓 Pʀᴏғᴇssɪᴏɴ : Sᴛᴜᴅᴇɴᴛ
-│ 📚 Eᴅᴜᴄᴀᴛɪᴏɴ : Iɴᴛᴇʀ 2ɴᴅ Yᴇᴀʀ
-│ 🏡 Lᴏᴄᴀᴛɪᴏɴ : 𝐃𝐡𝐚𝐤𝐚 - 𝐆𝐚𝐳𝐢𝐩𝐮𝐫
+│ 🎓 Pʀᴏғᴇssɪᴏɴ : Job holders 
+│ 📚 Eᴅᴜᴄᴀᴛɪᴏɴ : Scc 2025
+│ 🏡 Lᴏᴄᴀᴛɪᴏɴ : Cox Bazar- Bangladesh 
 ├─ 🔗 Cᴏɴᴛᴀᴄᴛ ─╮
-│ 📘 Facebook  : fb.com/akashx404 
+│ 📘 Facebook  : fb.com/ayanxhowdhury 
 │ 💬 Messenger: m.me/akashx404 
-│ 📞 WhatsApp  : wa.me/01933165880
+│ 📞 WhatsApp  : wa.me/01825784274
 ╰────────────────╯`;
 
     const cacheDir = path.join(__dirname, "cache");
@@ -36,7 +36,7 @@ module.exports = {
 
     if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
 
-    const imgLink = "https://i.imgur.com/1G4ZhU7.jpeg";
+    const imgLink = "https://i.postimg.cc/3RghXCnX/IMG-20260601-150213.jpg";
 
     const send = () => {
       api.sendMessage(
