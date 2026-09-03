@@ -1,4 +1,6 @@
 const axios = require("axios");
+const fs = require('fs');
+const path = require('path');
 
 const baseApiUrl = async () => {
         const base = await axios.get(`https://raw.githubusercontent.com/mahmudx7/HINATA/main/baseApiUrl.json`);
@@ -9,7 +11,7 @@ module.exports = {
         config: {
                 name: "video",
                 aliases: ["ভিডিও"],
-                version: "1.9",
+                version: "2.0",
                 author: "MahMUD",
                 countDown: 10,
                 role: 0,
@@ -74,14 +76,22 @@ module.exports = {
                                 videoID = searchRes.data[0].id;
                         }
 
+                        const cacheDir = path.join(__dirname, "cache");
+                        if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
+                        const filePath = path.join(cacheDir, `video_${Date.now()}.mp4`);
+
                         const res = await axios.get(`${apiUrl}/api/video/download?link=${videoID}&format=mp4`);
                         const { title, downloadLink } = res.data;
 
+                        const videoBuffer = (await axios.get(downloadLink, { responseType: "arraybuffer", timeout: 60000 })).data;
+                        fs.writeFileSync(filePath, Buffer.from(videoBuffer));
+
                         return message.reply({
                                 body: getLang("success", title),
-                                attachment: await global.utils.getStreamFromURL(downloadLink, "video.mp4")
+                                attachment: fs.createReadStream(filePath)
                         }, () => {
                                 api.setMessageReaction("🪽", event.messageID, () => {}, true);
+                                if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
                         });
 
                 } catch (err) {
