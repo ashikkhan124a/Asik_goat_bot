@@ -12,7 +12,7 @@
   "antiInbox": false,
   "language": "en",
   "notesLanguage": "change language using ISO 639-1 code",
-  "nickNameBot": "XUDI OKAY?",
+  "nickNameBot": "Ridh Er JANUUU Ukh 🪼?",
   "prefix": "/",
   "enableTypingIndicator": true,
   "typingDuration": 2000,
@@ -30,7 +30,7 @@
     "ignoreCommand": []
   },
   "adminBot": [
-    "61592832917083",
+    "61591763713247",
     " ",
     " "
   ],
@@ -38,15 +38,15 @@
     "enable": true,
     "onlyAdmin": true,
     "emojis": [
-      "😡",
-      "🤬"
+      "🪼",
+      "🪼"
     ],
     "notes": "If enable = true, bot will unsend any message reacted with these emojis. If onlyAdmin = true, only adminBot IDs can trigger it."
   },
   "whiteListMode": {
     "enable": false,
     "whiteListIds": [
-      "",
+      "61591763713247",
       ""
     ],
     "notes": "If enabled, only IDs in whiteListIds can use the bot."
